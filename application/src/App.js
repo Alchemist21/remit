@@ -2,6 +2,7 @@ import React from "react";
 import sf from "./util/superfluid";
 import getAddress from "./util/wallet";
 
+import "./Dashboard.css";
 import NetFlow from "./components/Netflow";
 import FlowItem from "./components/FlowItem";
 
@@ -45,19 +46,30 @@ function App() {
   }
 
   return (
-    <div>
-      <h1>Hello World</h1>
-      <button onClick={initSF}>Log In with MetaMask</button>
-      <form id="sendRemit" onSubmit={sendRemittance}>
-        <h3>Send Money</h3>
-        <p>To: <input type="text" name="receiver" className="receiver" /></p>
-        <p>Amount: <input type="text" name="amount" className="amount" /> DAI/month</p>
-        <button type="submit">Send Money</button>
-      </form>
-      {/* <button onClick={receiveRemittance}>Receive Money</button> */}
-      <button onClick={cancelRemittance}>Cancel Flow</button>
+    <div id="dashboard">
       <div>
+        <h1>Welcome!</h1>
+        <button onClick={initSF}>Log In with MetaMask</button>
+        <div className="summary">
+          <h3>Account Summary</h3>
+          <p>Current Balance</p>
+          <p className="balance">[Insert Amount] <span className="currency">DAI</span></p>
+        </div>
         <NetFlow />
+      </div>
+      <div>
+        <h3>Money Sent</h3>
+        <form id="sendRemit" onSubmit={sendRemittance}>
+          <p>Send Money</p>
+          <p>To: <input type="text" name="receiver" className="receiver" /></p>
+          <p>Amount: <input type="text" name="amount" className="amount" /> DAI/month</p>
+          <button type="submit">Send Money</button>
+        </form>
+        {/* <button onClick={receiveRemittance}>Receive Money</button> */}
+        <button onClick={cancelRemittance}>Cancel Flow</button>
+      </div>
+      <div>
+        <h3>Money Received</h3>
         <FlowItem />   
       </div>
     </div>

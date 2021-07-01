@@ -23,7 +23,7 @@ class NetFlow extends Component {
 
     render() {
         return (
-            <div>
+            <div className="summary">
                 <h3>My Flows</h3>
                 <button onClick={this.onClick}>Get Net CashFlow</button>
                 <p>{this.state.netFlow}</p>
