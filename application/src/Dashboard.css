@@ -1,4 +1,5 @@
 :root {
+    --primary: white;
     --grey: rgb(175, 175, 175);
 }
 
@@ -16,6 +17,17 @@
     border-radius: 10px;
 }
 
+.summary-action-btngroup {
+    display: flexbox;
+    flex-direction: row;
+    column-gap: 20px;
+}
+
+.summary-action-btngroup > button {
+    min-width: 100px;
+    margin: 5px;
+}
+
 #moneyin-column {
 
 }
@@ -25,10 +37,31 @@
 }
 
 button {
-    padding: 15px;
+    padding: 20px;
     font-size: 1.5ch;
+    font-weight: bold;
     border-radius: 10px;
     border: none;
+    transition-duration: 0.4s;
+}
+
+button:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+button.blue {
+    background-color: rgb(33, 121, 252);
+    color: white;
+}
+
+button.red {
+    background-color: rgb(255, 107, 107);
+    color: white;
+}
+
+button.yellow {
+    background-color: rgb(255, 217, 0);
 }
 
 .currency {
@@ -37,4 +70,37 @@ button {
 
 .balance {
     font-size: 2.5ch;
+}
+
+.modal {
+    display: none;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    backdrop-filter: blur(5px);
+}
+
+.modal-box {
+    max-width: 600px;
+    border: 2px solid var(--grey);
+    padding: 20px;
+    margin: auto;
+    border-radius: 10px;
+    background-color: var(--primary);
+}
+
+.modal-header {
+    padding: 10px;
+}
+
+.modal-body {
+    padding: 10px;
+}
+
+.modal-footer {
+    padding: 10px;
+}
+
+.modal-footer > button {
+    width: 100%;
 }

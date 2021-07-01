@@ -27,7 +27,7 @@ class FlowItem extends Component {
     render() {
         return (
             <div>
-                <button onClick={this.onClick}>Get CashFlow</button>
+                <button onClick={this.onClick} className="yellow">Get CashFlow</button>
                 <p>{this.state.flow} DAI/month</p>
                 <p>{this.state.deposit} DAI/month</p>
             </div>
