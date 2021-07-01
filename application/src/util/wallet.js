@@ -8,7 +8,6 @@ async function getAddress() {
         ]
     });
     const userAddress = walletAddress[0];
-    console.log(userAddress);
     return userAddress;
 }
 

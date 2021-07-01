@@ -21,22 +21,6 @@ function App() {
     user = getAddress();
   }
 
-  async function sendRemittance(e) {
-    e.preventDefault();
-    const receiver = document.querySelector('#sendRemit').querySelector('.receiver');
-    const inputAmount = document.querySelector('#sendRemit').querySelector('.amount');
-    otherUser = receiver.value;
-    amount = `${parseFloat(inputAmount.value) * 385802469135.802}`;
-    await sf.cfa.createFlow({
-      superToken: daix,
-      sender: user,
-      receiver: otherUser,
-      flowRate: amount
-    });
-    receiver.value = '';
-    inputAmount.value = '';
-  }
-
   async function cancelRemittance() {
     await sf.cfa.deleteFlow({
       superToken: daix,
@@ -47,13 +31,14 @@ function App() {
   }
 
   function showModal(e) {
-    const action = e.target.id;
+    const purpose = e.target.id;
     const modal = document.querySelector('.modal');
     const modalTitle = modal.querySelector('.modal-header').querySelector('h3');
     const footerBtn = modal.querySelector('.modal-footer').querySelector('button');
-    modalTitle.innerText = action.charAt(0).toLocaleUpperCase() + action.slice(1) + ' Money';
-    footerBtn.innerText = action.charAt(0).toLocaleUpperCase() + action.slice(1);
-    return modal.style.display = 'block';
+    modalTitle.innerText = purpose.charAt(0).toLocaleUpperCase() + purpose.slice(1) + ' Money';
+    footerBtn.innerText = purpose.charAt(0).toLocaleUpperCase() + purpose.slice(1);
+    modal.style.display = 'block';
+    return <Modal name={purpose} />
   }
 
   return (
@@ -88,12 +73,13 @@ function App() {
         </div>
         <div>
           <h3>Money Sent</h3>
-          <form id="sendRemit" onSubmit={sendRemittance}>
-            <p>Send Money</p>
-            <p>To: <input type="text" name="receiver" className="receiver" /></p>
-            <p>Amount: <input type="text" name="amount" className="amount" /> DAI/month</p>
-            <button type="submit" className="blue">Send Money</button>
-          </form>
+          <button 
+            type="button"
+            className="blue"
+            onClick={showModal}
+            id="send">
+              Create
+          </button>
           {/* <button onClick={receiveRemittance}>Receive Money</button> */}
           <button onClick={cancelRemittance} className="red">Cancel Flow</button>
         </div>

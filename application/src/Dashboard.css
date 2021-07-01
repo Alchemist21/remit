@@ -28,6 +28,14 @@
     margin: 5px;
 }
 
+.currency {
+    font-size: 1ch;
+}
+
+.balance {
+    font-size: 2.5ch;
+}
+
 #moneyin-column {
 
 }
@@ -36,6 +44,51 @@
 
 }
 
+/* Loading Animation */
+@keyframes spinner {
+    0% {
+      transform: translate3d(-50%, -50%, 0) rotate(0deg);
+    }
+    100% {
+      transform: translate3d(-50%, -50%, 0) rotate(360deg);
+    }
+}
+
+.spinner::before {
+    animation: 1.5s linear infinite spinner;
+    animation-play-state: inherit;
+    border: solid 5px #cfd0d1;
+    border-bottom-color: #1c87c9;
+    border-radius: 50%;
+    content: "";
+    height: 40px;
+    width: 40px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    will-change: transform;
+    backdrop-filter: blur(5px);
+}
+
+/* 
+----Elements----
+*/
+
+/* Inputs */
+input {
+    padding: 10px;
+    font-size: 1.5ch;
+    border: 1px solid var(--grey);
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+input.stretch {
+    max-width: 100%;
+}
+
+/* Buttons */
 button {
     padding: 20px;
     font-size: 1.5ch;
@@ -63,15 +116,7 @@ button.red {
 button.yellow {
     background-color: rgb(255, 217, 0);
 }
-
-.currency {
-    font-size: 1ch;
-}
-
-.balance {
-    font-size: 2.5ch;
-}
-
+/* Modal */
 .modal {
     display: none;
     position: absolute;
