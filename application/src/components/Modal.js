@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import SendForm from "./SendForm";
 
 class Modal extends Component {
     state = {
-        errorMessage: ''
+        errorMessage: '',
+        form: ''
     }
 
     onClick = (e) => {
@@ -12,11 +12,6 @@ class Modal extends Component {
             this.setState({ errorMessage: '' });
             return modal.style.display = 'none';
         }
-        // Send money
-
-        // deposit money
-
-        // withdraw money
     }
 
     render() {
@@ -26,12 +21,8 @@ class Modal extends Component {
                     <div className="modal-header">
                         <h3>Modal</h3>
                     </div>
-                    <div className="modal-body">
-                        <SendForm getDetails={this.props.getDetails}/>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="submit" form="sendForm" className="blue">Do Something</button>
-                    </div>
+                    {/* <SendForm getDetails={this.props.getDetails}/> */}
+                    {this.props.formType}
                 </div>
             </div>
         )

@@ -6,6 +6,8 @@ import NetFlow from "./components/Netflow";
 import FlowItem from "./components/FlowItem";
 import Modal from "./components/Modal";
 import Login from "./components/Login";
+import SendForm from "./components/SendForm";
+import RequestForm from "./components/RequestForm";
 
 class App extends Component {
   constructor(props) {
@@ -19,7 +21,9 @@ class App extends Component {
       inFlows: [],
       outFlows: [],
       netFlow: '',
-      amount: ''
+      amount: '',
+      formType: '',
+      formId: ''
     }
   }
 
@@ -40,7 +44,7 @@ class App extends Component {
         flowRate: amount // update flowRate with custom amount
       });
     } catch (error) {
-      this.setState({ errorMessage: error.message })
+      this.setState({ errorMessage: error.message });
     }
     this.getUserDetails();
   }
@@ -99,22 +103,27 @@ class App extends Component {
     this.getUserDetails();
   }
 
-  render() {
-    function showModal(e) {
-      const purpose = e.target.id;
-      const modal = document.querySelector('#modal');
-      const modalTitle = modal.querySelector('.modal-header').querySelector('h3');
-      const footerBtn = modal.querySelector('.modal-footer').querySelector('button');
-      modalTitle.innerText = purpose.charAt(0).toLocaleUpperCase() + purpose.slice(1) + ' Money';
-      footerBtn.innerText = purpose.charAt(0).toLocaleUpperCase() + purpose.slice(1);
-      modal.style.display = 'block';
-      return <Modal name={purpose} />
+  showModal = (e) => {
+    const { id } = e.target;
+    const modal = document.querySelector('#modal');
+    const modalTitle = modal.querySelector('.modal-header').querySelector('h3');
+    modalTitle.innerText = id.charAt(0).toLocaleUpperCase() + id.slice(1) + ' Money';
+    modal.style.display = 'block';
+    const form = () => {
+      if (id === 'send') return (<SendForm getDetails={this.getUserDetails} />);
+      if (id === 'request') return (<RequestForm />);
+      // if (id === 'deposit') return (<DepositForm />);
+      // if (id === 'withdraw') return (<WithdrawForm />);
     }
-  
+    const type = form();
+    this.setState({ formType: type, formId: id });
+  }
+
+  render() {
     return (
       <div>
         <Login setUser={this.createUser}/>
-        <Modal getDetails={this.getUserDetails}/>
+        <Modal formType={this.state.formType} formId={this.state.formId} />
         <div id="dashboard">
           <div>
             <h1>Dashboard</h1>
@@ -128,14 +137,14 @@ class App extends Component {
                   <button 
                     type="button" 
                     className="blue" 
-                    onClick={showModal}
+                    onClick={this.showModal}
                     id="deposit">
                       Deposit
                   </button>
                   <button 
                     type="button" 
                     className="yellow"
-                    onClick={showModal}
+                    onClick={this.showModal}
                     id="withdraw">
                       Withdraw
                   </button>
@@ -149,7 +158,7 @@ class App extends Component {
               <button 
                 type="button"
                 className="blue"
-                onClick={showModal}
+                onClick={this.showModal}
                 id="send">
                   Create
               </button>
@@ -165,7 +174,7 @@ class App extends Component {
               <button 
                 type="button"
                 className="yellow"
-                onClick={showModal}
+                onClick={this.showModal}
                 id="request">
                   Request
               </button>
