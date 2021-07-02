@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import sf from "../util/superfluid";
+import getAddress from "../util/wallet";
 
 class Login extends Component {
     state = {
@@ -12,6 +13,8 @@ class Login extends Component {
         this.setState({ isInitializing: true });
         try {
             await sf.initialize();
+            const address = await getAddress();
+            this.props.setUser(address);
         } catch (err) {
             this.setState({errorMessage: err.message});
         }
