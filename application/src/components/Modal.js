@@ -27,7 +27,7 @@ class Modal extends Component {
                         <h3>Modal</h3>
                     </div>
                     <div className="modal-body">
-                        <SendForm />
+                        <SendForm getDetails={this.props.getDetails}/>
                     </div>
                     <div className="modal-footer">
                         <button type="submit" form="sendForm" className="blue">Do Something</button>

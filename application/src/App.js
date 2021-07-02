@@ -15,39 +15,89 @@ class App extends Component {
       isInitializing: false,
       isProcessing: false,
       user: '',
-      daix: '0x745861AeD1EEe363b4AaA5F1994Be40b1e05Ff90'
+      daix: '0x745861AeD1EEe363b4AaA5F1994Be40b1e05Ff90',
+      inFlows: [],
+      outFlows: [],
+      netFlow: ''
     }
   }
 
+  cancelRemittance = async (receiver) => {
+    const { user } = this.state;
+    await user.flow({
+      recipient: receiver,
+      flowRate: '0'
+    });
+    this.getUserDetails();
+  }
+
+  updateRemittance = async (receiver, amount) => {
+    const { user } = this.state;
+    await user.flow({
+      recipient: receiver,
+      flowRate: amount // update flowRate with custom amount
+    });
+    this.getUserDetails();
+  }
+
+  // This function is not working onClick
+  showAmountInput = (receiver) => {
+    let amount;
+
+    return (
+      <form onSubmit={e => this.updateRemittance(receiver, amount)}>
+        <input type="number" name="amount" onChange={e => {
+          amount = e.target.value;
+        }} />
+        <button type="submit" className="yellow">Update</button>
+      </form>
+    )
+  }
+
+  getUserDetails = async () => {
+    const { user } = this.state;
+    const details = await user.details();
+    console.log(details);
+    const outFlows = details.cfa.flows.outFlows;
+    const sentStreams = outFlows.length ? outFlows.map(flow => {
+      return (
+        <div>
+          <p className="balance">-{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
+          <p>To: {flow.receiver}</p>
+          <button onClick={e => this.cancelRemittance(flow.receiver)} className="red">Terminate</button>
+          <button onClick={this.showAmountInput(flow.receiver)} className="yellow">Change Amount</button>
+        </div>
+      )
+    }) : [];
+
+    // const inFlows = details.cfa.flows.inFlows;
+    // const receiveStreams = inFlows.length ? inFlows.map(flow => {
+    //   return (
+    //     <div>
+    //       <p className="balance">-{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
+    //       <p>To: {flow.receiver}</p>
+    //       <button onClick={e => this.cancelRemittance(flow.receiver)} className="red">End</button>
+    //     </div>
+    //   )
+    // }) : [];
+
+    this.setState({
+      inFlows: details.cfa.flows.inFlows,
+      outFlows: sentStreams,
+      netFlow: `${parseFloat(details.cfa.netFlow) / 385802469135.802}`
+    });
+  }
+
   createUser = async (address) => {
-    // const walletAddress = await getAddress();
     const user = await sf.user({
       token: this.state.daix,
       address: address
     });
     this.setState({ user });
-    const details = await user.details();
-    console.log(details);
+    this.getUserDetails();
   }
 
   render() {
-    let amount;
-    let daix;
-    let user;
-    let otherUser;
-    
-    daix = '0x745861AeD1EEe363b4AaA5F1994Be40b1e05Ff90';
-    otherUser = ''; // Insert a MetaMask account address
-  
-    async function cancelRemittance() {
-      await sf.cfa.deleteFlow({
-        superToken: daix,
-        sender: user,
-        receiver: otherUser,
-        by: user
-      });
-    }
-  
     function showModal(e) {
       const purpose = e.target.id;
       const modal = document.querySelector('#modal');
@@ -62,7 +112,7 @@ class App extends Component {
     return (
       <div>
         <Login setUser={this.createUser}/>
-        <Modal />
+        <Modal getDetails={this.getUserDetails}/>
         <div id="dashboard">
           <div>
             <h1>Dashboard</h1>
@@ -87,7 +137,7 @@ class App extends Component {
                 </button>
               </div>
             </div>
-            <NetFlow />
+            <NetFlow flowRate={this.state.netFlow}/>
           </div>
           <div>
             <h3>Money Sent</h3>
@@ -98,12 +148,20 @@ class App extends Component {
               id="send">
                 Create
             </button>
+            {this.state.outFlows}
             {/* <button onClick={receiveRemittance}>Receive Money</button> */}
-            <button onClick={cancelRemittance} className="red">Cancel Flow</button>
+            {/* <button onClick={cancelRemittance} className="red">Cancel Flow</button> */}
           </div>
           <div>
             <h3>Money Received</h3>
-            <FlowItem />   
+            <button 
+              type="button"
+              className="yellow"
+              onClick={showModal}
+              id="request">
+                Request
+            </button>
+            {this.state.inFlows}
           </div>
         </div>
       </div>

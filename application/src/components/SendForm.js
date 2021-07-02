@@ -24,6 +24,8 @@ class SendForm extends Component {
                 receiver: otherUser,
                 flowRate: amount
             });
+            // This function is not working - expected to re-render new flows but nothing
+            await this.props.getDetails();
         } catch (error) {
             this.setState({ errorMessage: error.message });
         }
