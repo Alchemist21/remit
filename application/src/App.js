@@ -18,7 +18,8 @@ class App extends Component {
       daix: '0x745861AeD1EEe363b4AaA5F1994Be40b1e05Ff90',
       inFlows: [],
       outFlows: [],
-      netFlow: ''
+      netFlow: '',
+      amount: ''
     }
   }
 
@@ -31,27 +32,17 @@ class App extends Component {
     this.getUserDetails();
   }
 
-  updateRemittance = async (receiver, amount) => {
-    const { user } = this.state;
-    await user.flow({
-      recipient: receiver,
-      flowRate: amount // update flowRate with custom amount
-    });
+  updateRemittance = async (receiver) => {
+    const { user, amount } = this.state;
+    try {
+      await user.flow({
+        recipient: receiver,
+        flowRate: amount // update flowRate with custom amount
+      });
+    } catch (error) {
+      this.setState({ errorMessage: error.message })
+    }
     this.getUserDetails();
-  }
-
-  // This function is not working onClick
-  showAmountInput = (receiver) => {
-    let amount;
-
-    return (
-      <form onSubmit={e => this.updateRemittance(receiver, amount)}>
-        <input type="number" name="amount" onChange={e => {
-          amount = e.target.value;
-        }} />
-        <button type="submit" className="yellow">Update</button>
-      </form>
-    )
   }
 
   getUserDetails = async () => {
@@ -64,8 +55,16 @@ class App extends Component {
         <div>
           <p className="balance">-{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
           <p>To: {flow.receiver}</p>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            await this.updateRemittance(flow.receiver);
+            const amount = e.target.querySelector('input[name="amount"]');
+            amount.value = '';
+          }} method="post">
+            <input type="number" name="amount" onChange={e => this.setState({ amount: `${parseFloat(e.target.value) * 385802469135.802}` })} required/>
+            <button className="yellow">Change Amount</button>
+          </form>
           <button onClick={e => this.cancelRemittance(flow.receiver)} className="red">Terminate</button>
-          <button onClick={this.showAmountInput(flow.receiver)} className="yellow">Change Amount</button>
         </div>
       )
     }) : [];
