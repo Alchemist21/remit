@@ -53,35 +53,38 @@ class App extends Component {
     const sentStreams = outFlows.length ? outFlows.map(flow => {
       return (
         <div>
-          <p className="balance">-{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
-          <p>To: {flow.receiver}</p>
-          <form onSubmit={async (e) => {
-            e.preventDefault();
-            await this.updateRemittance(flow.receiver);
-            const amount = e.target.querySelector('input[name="amount"]');
-            amount.value = '';
-          }} method="post">
-            <input type="number" name="amount" onChange={e => this.setState({ amount: `${parseFloat(e.target.value) * 385802469135.802}` })} required/>
-            <button className="yellow">Change Amount</button>
-          </form>
-          <button onClick={e => this.cancelRemittance(flow.receiver)} className="red">Terminate</button>
+          <div className="flowItem">
+            <p className="balance">-{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
+            <p className="flowItem-address">To: {`${flow.receiver.substr(0, 12)}...`}</p>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              await this.updateRemittance(flow.receiver);
+              const amount = e.target.querySelector('input[name="amount"]');
+              amount.value = '';
+            }} method="post">
+              <input type="number" name="amount" onChange={e => this.setState({ amount: `${parseFloat(e.target.value) * 385802469135.802}` })} required/>
+              <button className="yellow">Change Amount</button>
+            </form>
+            <button onClick={e => this.cancelRemittance(flow.receiver)} className="red">Terminate</button>
+          </div>
+          <hr/>
         </div>
       )
-    }) : [];
+    }) : 'None ongoing at the moment';
 
-    // const inFlows = details.cfa.flows.inFlows;
-    // const receiveStreams = inFlows.length ? inFlows.map(flow => {
-    //   return (
-    //     <div>
-    //       <p className="balance">-{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
-    //       <p>To: {flow.receiver}</p>
-    //       <button onClick={e => this.cancelRemittance(flow.receiver)} className="red">End</button>
-    //     </div>
-    //   )
-    // }) : [];
+    const inFlows = details.cfa.flows.inFlows;
+    const receiveStreams = inFlows.length ? inFlows.map(flow => {
+      return (
+        <div>
+          <p className="balance">+{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
+          <p className="flowItem-address">From: {flow.sender}</p>
+          <button onClick={e => this.cancelRemittance(flow.sender)} className="red">End</button>
+        </div>
+      )
+    }) : 'None ongoing at the moment';
 
     this.setState({
-      inFlows: details.cfa.flows.inFlows,
+      inFlows: receiveStreams,
       outFlows: sentStreams,
       netFlow: `${parseFloat(details.cfa.netFlow) / 385802469135.802}`
     });
@@ -115,52 +118,60 @@ class App extends Component {
         <div id="dashboard">
           <div>
             <h1>Dashboard</h1>
-            <div className="summary">
-              <h3>Account Summary</h3>
-              <p>Current Balance</p>
-              <p className="balance">[Insert Amount] <span className="currency">DAI</span></p>
-              <div className="summary-action-btngroup">
-                <button 
-                  type="button" 
-                  className="blue" 
-                  onClick={showModal}
-                  id="deposit">
-                    Deposit
-                </button>
-                <button 
-                  type="button" 
-                  className="yellow"
-                  onClick={showModal}
-                  id="withdraw">
-                    Withdraw
-                </button>
+            <div className="column-box">
+              <div className="summary">
+                <h3 className="summary-title">Account Summary</h3>
+                <NetFlow flowRate={this.state.netFlow}/>
+                <p>Current Balance</p>
+                <p className="balance">[Insert Amount] <span className="currency">DAI</span></p>
+                <div className="summary-action-btngroup">
+                  <button 
+                    type="button" 
+                    className="blue" 
+                    onClick={showModal}
+                    id="deposit">
+                      Deposit
+                  </button>
+                  <button 
+                    type="button" 
+                    className="yellow"
+                    onClick={showModal}
+                    id="withdraw">
+                      Withdraw
+                  </button>
+              </div>
               </div>
             </div>
-            <NetFlow flowRate={this.state.netFlow}/>
           </div>
-          <div>
-            <h3>Money Sent</h3>
-            <button 
-              type="button"
-              className="blue"
-              onClick={showModal}
-              id="send">
-                Create
-            </button>
-            {this.state.outFlows}
-            {/* <button onClick={receiveRemittance}>Receive Money</button> */}
-            {/* <button onClick={cancelRemittance} className="red">Cancel Flow</button> */}
+          <div className="column-box">
+            <div className="summary">
+              <h3 className="summary-title">Money Sent</h3>
+              <button 
+                type="button"
+                className="blue"
+                onClick={showModal}
+                id="send">
+                  Create
+              </button>
+              <hr/>
+              {this.state.outFlows}
+              {/* <button onClick={receiveRemittance}>Receive Money</button> */}
+              {/* <button onClick={cancelRemittance} className="red">Cancel Flow</button> */}
+            </div>
           </div>
-          <div>
-            <h3>Money Received</h3>
-            <button 
-              type="button"
-              className="yellow"
-              onClick={showModal}
-              id="request">
-                Request
-            </button>
-            {this.state.inFlows}
+          <div className="column-box">
+            <div className="summary flow-column">
+              <h3 className="summary-title">Money Received</h3>
+              <button 
+                type="button"
+                className="yellow"
+                onClick={showModal}
+                id="request">
+                  Request
+              </button>
+              <hr/>
+              {this.state.inFlows}
+            </div>
           </div>
         </div>
       </div>
