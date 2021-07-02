@@ -6,6 +6,7 @@ import "./Dashboard.css";
 import NetFlow from "./components/Netflow";
 import FlowItem from "./components/FlowItem";
 import Modal from "./components/Modal";
+import Login from "./components/Login";
 
 function App() {
   let amount;
@@ -15,11 +16,6 @@ function App() {
   
   daix = '0x745861AeD1EEe363b4AaA5F1994Be40b1e05Ff90';
   otherUser = ''; // Insert a MetaMask account address
-
-  async function initSF() {
-    await sf.initialize();
-    user = getAddress();
-  }
 
   async function cancelRemittance() {
     await sf.cfa.deleteFlow({
@@ -32,7 +28,7 @@ function App() {
 
   function showModal(e) {
     const purpose = e.target.id;
-    const modal = document.querySelector('.modal');
+    const modal = document.querySelector('#modal');
     const modalTitle = modal.querySelector('.modal-header').querySelector('h3');
     const footerBtn = modal.querySelector('.modal-footer').querySelector('button');
     modalTitle.innerText = purpose.charAt(0).toLocaleUpperCase() + purpose.slice(1) + ' Money';
@@ -43,11 +39,11 @@ function App() {
 
   return (
     <div>
+      <Login />
       <Modal />
       <div id="dashboard">
         <div>
-          <h1>Welcome!</h1>
-          <button onClick={initSF} className="blue">Log In with MetaMask</button>
+          <h1>Dashboard</h1>
           <div className="summary">
             <h3>Account Summary</h3>
             <p>Current Balance</p>

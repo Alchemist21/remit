@@ -7,7 +7,7 @@ class Modal extends Component {
     }
 
     onClick = (e) => {
-        const modal = document.querySelector('.modal');
+        const modal = document.querySelector('#modal');
         if (e.target.classList.contains('modal') && !e.target.classList.contains('sticky')) {
             this.setState({ errorMessage: '' });
             return modal.style.display = 'none';
@@ -21,7 +21,7 @@ class Modal extends Component {
 
     render() {
         return (
-            <div className="modal" onClick={this.onClick}>
+            <div id="modal" className="modal" onClick={this.onClick}>
                 <div className="modal-box">
                     <div className="modal-header">
                         <h3>Modal</h3>
