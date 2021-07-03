@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import sf from "./util/superfluid";
+import Gun from "gun";
 
 import "./Dashboard.css";
 import NetFlow from "./components/Netflow";
@@ -12,6 +13,8 @@ import RequestForm from "./components/RequestForm";
 class App extends Component {
   constructor(props) {
     super(props);
+    this.gun = Gun();
+    window.gun = this.gun;
     this.state = {
       errorMessage: '',
       isInitializing: false,
@@ -23,7 +26,8 @@ class App extends Component {
       netFlow: '',
       amount: '',
       formType: '',
-      formId: ''
+      formId: '',
+      username: ''
     }
   }
 
@@ -103,6 +107,10 @@ class App extends Component {
     this.getUserDetails();
   }
 
+  showUserName = (name) => {
+    this.setState({ username: name });
+  }
+
   showModal = (e) => {
     const { id } = e.target;
     const modal = document.querySelector('#modal');
@@ -122,11 +130,11 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Login setUser={this.createUser}/>
+        <Login setUser={this.createUser} showUserName={this.showUserName} />
         <Modal formType={this.state.formType} formId={this.state.formId} />
         <div id="dashboard">
           <div>
-            <h1>Dashboard</h1>
+            <h1>{this.state.username}'s Dashboard</h1>
             <div className="column-box">
               <div className="summary">
                 <h3 className="summary-title">Account Summary</h3>
