@@ -76,7 +76,7 @@ class Login extends Component {
                     </div>
                     <div className="modal-body">
                         <p>Please connect to your MetaMask wallet to continue.</p>
-                        <input type="text" onChange={this.onChange} placeholder="@username" hidden />
+                        <input type="text" onChange={this.onChange} placeholder="e.g. Adam" hidden />
                     </div>
                     <div className="modal-footer">
                         <button className="blue" id="connectWallet" onClick={this.onClick}>Connect to MetaMask</button>
