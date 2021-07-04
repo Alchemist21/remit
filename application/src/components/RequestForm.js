@@ -85,13 +85,13 @@ class RequestForm extends Component {
                                             <option className="placeholder-opt" value="">Select an existing contact</option>
                                         </select>
                                          --OR-- 
-                                        <input type="text" name="sender" className="stretch" placeholder="Enter an address" required />
+                                        <input type="text" name="sender" className="stretch" placeholder="Enter an address" required style={{marginTop: '5px'}} />
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Amount:</th>
-                                    <td>
-                                        <input type="number" name="amount" placeholder="0.00" required />DAI
+                                    <th scope="row" style={{paddingTop: '20px'}}>Amount:</th>
+                                    <td style={{paddingTop: '20px'}}>
+                                        <input type="number" name="amount" placeholder="0.00" required style={{marginRight: '5px', textAlign: 'right'}} />DAI
                                         <span> /month</span>
                                     </td>
                                 </tr>

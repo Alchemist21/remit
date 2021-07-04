@@ -3,16 +3,21 @@
     --grey: rgb(175, 175, 175);
 }
 
+body {
+    background-color: whitesmoke;
+}
+
 #dashboard {
     display: grid;
     grid-template-columns: auto 1fr 1fr;
     gap: 25px;
-    padding: 20px;
+    padding: 40px;
 }
 
 .column-box {
     border: 2px solid var(--grey);
     border-radius: 10px;
+    background-color: white;
 }
 
 .summary {
@@ -53,7 +58,17 @@
     padding: 5px;
 }
 
-.flowItem > .balance {
+.flowItem.inFlow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.flowItem.inFlow .flowItem-address {
+    margin: 0;
+}
+
+.flowItem .balance {
     margin: 0;
 }
 
@@ -69,15 +84,7 @@
     justify-content: flex-end;
 }
 
-.flowItem-form > button {
-    padding: 5px 5px;
-    font-size: 1.5ch;
-    font-weight: bold;
-    transition-duration: 0.4s;
-    background-color: var(--primary);
-}
-
-.flowItem-form > input {
+.flowItem-form input {
     padding: 5px;
     font-size: 1.5ch;
     border: 1px solid var(--grey);
@@ -87,10 +94,20 @@
 }
 
 .flowItem-terminate-btn {
+    padding: 5px 5px;
+    font-size: 1.5ch;
+    font-weight: bold;
+    transition-duration: 0.4s;
+    background-color: var(--primary);
     color: rgb(255, 107, 107);
 }
 
 .flowItem-change-btn {
+    padding: 5px 5px;
+    font-size: 1.5ch;
+    font-weight: bold;
+    transition-duration: 0.4s;
+    background-color: var(--primary);
     color: rgb(255, 217, 0);
 }
 
@@ -193,7 +210,7 @@ button.yellow {
     max-width: 600px;
     border: 2px solid var(--grey);
     padding: 20px;
-    margin: auto;
+    margin: 50px auto;
     border-radius: 10px;
     background-color: var(--primary);
 }

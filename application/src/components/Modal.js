@@ -21,7 +21,6 @@ class Modal extends Component {
                     <div className="modal-header">
                         <h3>Modal</h3>
                     </div>
-                    {/* <SendForm getDetails={this.props.getDetails}/> */}
                     {this.props.formType}
                 </div>
             </div>

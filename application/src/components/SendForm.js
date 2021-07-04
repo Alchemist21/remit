@@ -81,20 +81,24 @@ class SendForm extends Component {
                                     <td>
                                         <select onChange={this.onChange} id="contactList-receiver" placeholder="Select an existing contact" onClick={this.onAppear}>
                                             <option className="placeholder-opt" value="">Select an existing contact</option>
-                                        </select>
-                                         --OR-- 
-                                        <input type="text" name="receiver" className="stretch" placeholder="Enter an address" required />
+                                        </select>     --OR--     
+                                        <input type="text" name="receiver" className="stretch" placeholder="Enter an address" required style={{marginTop: '5px'}} />
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Amount:</th>
-                                    <td>
-                                        <input type="number" name="amount" placeholder="0.00" required />DAI
+                                    <th scope="row" style={{paddingTop: '20px'}} >Amount:</th>
+                                    <td style={{paddingTop: '20px'}}>
+                                        <input type="number" name="amount" placeholder="0.00" required style={{marginRight: '5px', textAlign: 'right'}} />DAI
                                         <span> /month</span>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                        <p className="notes">
+                            Please keep a sufficient balance in your account so your remittance
+                            can maintain a continuous stream to your recipient. All remittances 
+                            will continue sending tokens every second until you manually stop them.
+                        </p>
                         <div className="spinner" hidden={!this.state.isProcessing} />
                         <p style={{color: 'red', fontWeight: 'bold'}}>{this.state.errorMessage}</p>
                     </form>

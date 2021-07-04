@@ -8,6 +8,7 @@ import Modal from "./components/Modal";
 import Login from "./components/Login";
 import SendForm from "./components/SendForm";
 import RequestForm from "./components/RequestForm";
+import BalanceForm from "./components/BalanceForm";
 
 class App extends Component {
   constructor(props) {
@@ -73,16 +74,18 @@ class App extends Component {
             <p className="balance">-{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
             <p className="flowItem-address">To: {`${flow.receiver.substr(0, 12)}...`}</p>
             <div className="spinner" hidden={!this.state.isProcessing} />
-            <form className="flowItem-form" onSubmit={async (e) => {
-              e.preventDefault();
-              await this.updateRemittance(flow.receiver);
-              const amount = e.target.querySelector('input[name="amount"]');
-              amount.value = '';
-            }} method="post">
-              <input className="stretch" type="number" name="amount" onChange={e => this.setState({ amount: `${parseFloat(e.target.value) * 385802469135.802}` })} required/>
-              <button type="submit" className="flowItem-change-btn">Change</button>
+            <div className="flowItem-form">
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                await this.updateRemittance(flow.receiver);
+                const amount = e.target.querySelector('input[name="amount"]');
+                amount.value = '';
+              }} method="post">
+                <input type="number" name="amount" onChange={e => this.setState({ amount: `${parseFloat(e.target.value) * 385802469135.802}` })} required/>
+                <button type="submit" className="flowItem-change-btn">Change</button>
+              </form>
               <button type="button" onClick={e => this.cancelRemittance(flow.receiver)} className="flowItem-terminate-btn">End</button>
-            </form>
+            </div>
             <p style={{color: 'red', fontWeight: 'bold', fontSize: '1ch'}}>{this.state.errorMessage}</p>
           </div>
           <hr/>
@@ -94,9 +97,14 @@ class App extends Component {
     const receiveStreams = inFlows.length ? inFlows.map(flow => {
       return (
         <div>
-          <p className="balance">+{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
-          <p className="flowItem-address">From: {flow.sender}</p>
-          <button onClick={e => this.cancelRemittance(flow.sender)} className="red">End</button>
+          <div className="flowItem inFlow">
+            <div>
+              <p className="balance">+{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
+              <p className="flowItem-address">From: {`${flow.sender.substr(0, 12)}...`}</p>
+            </div>
+            <button onClick={e => this.cancelRemittance(flow.sender)} className="flowItem-terminate-btn">End</button>
+          </div>
+          <hr/>
         </div>
       )
     }) : 'None ongoing at the moment';
@@ -129,11 +137,6 @@ class App extends Component {
     const user = this.gun.get(`user/${address}`);
     const results = [];
 
-    // await user.get('connections').get('1').put({
-    //   address: '0xE72b6fA315F56d1a14e72cA7E9f17C125CDE7543',
-    //   alias: 'Bob'
-    // });
-
     await user.get('connections').map((data, key) => {
       results.push({alias: data.alias, address: data.address});
     });
@@ -151,8 +154,10 @@ class App extends Component {
     const form = () => {
       if (id === 'send') return (<SendForm getDetails={this.getUserDetails} getConnections={this.getUserConnections} />);
       if (id === 'request') return (<RequestForm getConnections={this.getUserConnections} />);
-      // if (id === 'deposit') return (<DepositForm />);
-      // if (id === 'withdraw') return (<WithdrawForm />);
+      if (id === 'deposit') return (<BalanceForm address={this.state.user.address} formId={'depositForm'} transferType={'From:'} btnColor={'blue'} btnName={'Deposit'} 
+      note={'Please note that tokens must be deposited in order to be wrapped with the functionality that allows your remittances to be streamed continuously to your other desired parties.'} />);
+      if (id === 'withdraw') return (<BalanceForm address={this.state.user.address} formId={'withdrawForm'} transferType={'To:'} btnColor={'yellow'} btnName={'Withdraw'} 
+      note={'Please make sure your balance will still have enough tokens after withdrawal to sufficiently cover any remittances being sent. Payments do not stop until you manually stop them.'} />);
     }
     const type = form();
     this.setState({ formType: type, formId: id });
@@ -201,13 +206,11 @@ class App extends Component {
                   className="blue"
                   onClick={this.showModal}
                   id="send">
-                    Create
+                    + Create
                 </button>
               </div>
               <hr/>
               {this.state.outFlows}
-              {/* <button onClick={receiveRemittance}>Receive Money</button> */}
-              {/* <button onClick={cancelRemittance} className="red">Cancel Flow</button> */}
             </div>
           </div>
           <div className="column-box">
@@ -219,7 +222,7 @@ class App extends Component {
                   className="yellow"
                   onClick={this.showModal}
                   id="request">
-                    Request
+                    + Request
                 </button>
               </div>
               <hr/>
