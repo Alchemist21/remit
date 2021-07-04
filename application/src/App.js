@@ -4,7 +4,6 @@ import Gun from "gun";
 
 import "./Dashboard.css";
 import NetFlow from "./components/Netflow";
-import FlowItem from "./components/FlowItem";
 import Modal from "./components/Modal";
 import Login from "./components/Login";
 import SendForm from "./components/SendForm";
@@ -23,25 +22,33 @@ class App extends Component {
       daix: '0x745861AeD1EEe363b4AaA5F1994Be40b1e05Ff90',
       inFlows: [],
       outFlows: [],
-      netFlow: '',
+      netFlow: 0,
       amount: '',
       formType: '',
       formId: '',
-      username: ''
+      username: '',
+      currentBalance: 0
     }
   }
 
   cancelRemittance = async (receiver) => {
     const { user } = this.state;
-    await user.flow({
-      recipient: receiver,
-      flowRate: '0'
-    });
+    this.setState({ isProcessing: true });
+    try {
+      await user.flow({
+        recipient: receiver,
+        flowRate: '0'
+      });
+    } catch (err) {
+      this.setState({ errorMessage: err.message });
+    }
+    this.setState({ isProcessing: false });
     this.getUserDetails();
   }
 
   updateRemittance = async (receiver) => {
     const { user, amount } = this.state;
+    this.setState({ isProcessing: true });
     try {
       await user.flow({
         recipient: receiver,
@@ -50,6 +57,7 @@ class App extends Component {
     } catch (error) {
       this.setState({ errorMessage: error.message });
     }
+    this.setState({ isProcessing: false });
     this.getUserDetails();
   }
 
@@ -64,16 +72,18 @@ class App extends Component {
           <div className="flowItem">
             <p className="balance">-{parseFloat(flow.flowRate)/385802469135.802} <span className="currency">DAI /month</span></p>
             <p className="flowItem-address">To: {`${flow.receiver.substr(0, 12)}...`}</p>
-            <form onSubmit={async (e) => {
+            <div className="spinner" hidden={!this.state.isProcessing} />
+            <form className="flowItem-form" onSubmit={async (e) => {
               e.preventDefault();
               await this.updateRemittance(flow.receiver);
               const amount = e.target.querySelector('input[name="amount"]');
               amount.value = '';
             }} method="post">
-              <input type="number" name="amount" onChange={e => this.setState({ amount: `${parseFloat(e.target.value) * 385802469135.802}` })} required/>
-              <button className="yellow">Change Amount</button>
+              <input className="stretch" type="number" name="amount" onChange={e => this.setState({ amount: `${parseFloat(e.target.value) * 385802469135.802}` })} required/>
+              <button type="submit" className="flowItem-change-btn">Change</button>
+              <button type="button" onClick={e => this.cancelRemittance(flow.receiver)} className="flowItem-terminate-btn">End</button>
             </form>
-            <button onClick={e => this.cancelRemittance(flow.receiver)} className="red">Terminate</button>
+            <p style={{color: 'red', fontWeight: 'bold', fontSize: '1ch'}}>{this.state.errorMessage}</p>
           </div>
           <hr/>
         </div>
@@ -105,6 +115,10 @@ class App extends Component {
     });
     this.setState({ user });
     this.getUserDetails();
+
+    if (this.state.username === 'Paul') return this.setState({ currentBalance: 995.63 });
+    if (this.state.username === 'Bob') return this.setState({ currentBalance: 103.82 });
+    if (this.state.username === 'Alice') return this.setState({ currentBalance: 700.08 });
   }
 
   showUserName = (name) => {
@@ -155,9 +169,10 @@ class App extends Component {
             <div className="column-box">
               <div className="summary">
                 <h3 className="summary-title">Account Summary</h3>
+                <hr />
                 <NetFlow flowRate={this.state.netFlow}/>
-                <p>Current Balance</p>
-                <p className="balance">[Insert Amount] <span className="currency">DAI</span></p>
+                <h3>Current Balance</h3>
+                <p className="balance">{this.state.currentBalance} <span className="currency">DAI</span></p>
                 <div className="summary-action-btngroup">
                   <button 
                     type="button" 
@@ -179,14 +194,16 @@ class App extends Component {
           </div>
           <div className="column-box">
             <div className="summary">
-              <h3 className="summary-title">Money Sent</h3>
-              <button 
-                type="button"
-                className="blue"
-                onClick={this.showModal}
-                id="send">
-                  Create
-              </button>
+              <div className="flow-header">
+                <h3 className="summary-title">Money Sent</h3>
+                <button 
+                  type="button"
+                  className="blue"
+                  onClick={this.showModal}
+                  id="send">
+                    Create
+                </button>
+              </div>
               <hr/>
               {this.state.outFlows}
               {/* <button onClick={receiveRemittance}>Receive Money</button> */}
@@ -194,15 +211,17 @@ class App extends Component {
             </div>
           </div>
           <div className="column-box">
-            <div className="summary flow-column">
-              <h3 className="summary-title">Money Received</h3>
-              <button 
-                type="button"
-                className="yellow"
-                onClick={this.showModal}
-                id="request">
-                  Request
-              </button>
+            <div className="summary">
+              <div className="flow-header">
+                <h3 className="summary-title">Money Received</h3>
+                <button 
+                  type="button"
+                  className="yellow"
+                  onClick={this.showModal}
+                  id="request">
+                    Request
+                </button>
+              </div>
               <hr/>
               {this.state.inFlows}
             </div>
