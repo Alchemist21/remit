@@ -112,6 +112,13 @@ input.stretch {
     max-width: 100%;
 }
 
+select {
+    padding: 10px;
+    font-size: 1.5ch;
+    border: 1px solid var(--grey);
+    border-radius: 5px;
+}
+
 /* Buttons */
 button {
     padding: 20px;

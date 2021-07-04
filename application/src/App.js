@@ -111,6 +111,23 @@ class App extends Component {
     this.setState({ username: name });
   }
 
+  getUserConnections = async (address) => {
+    const user = this.gun.get(`user/${address}`);
+    const results = [];
+
+    // await user.get('connections').get('1').put({
+    //   address: '0xE72b6fA315F56d1a14e72cA7E9f17C125CDE7543',
+    //   alias: 'Bob'
+    // });
+
+    await user.get('connections').map((data, key) => {
+      results.push({alias: data.alias, address: data.address});
+    });
+
+    console.log(results);
+    return results;
+  }
+
   showModal = (e) => {
     const { id } = e.target;
     const modal = document.querySelector('#modal');
@@ -118,8 +135,8 @@ class App extends Component {
     modalTitle.innerText = id.charAt(0).toLocaleUpperCase() + id.slice(1) + ' Money';
     modal.style.display = 'block';
     const form = () => {
-      if (id === 'send') return (<SendForm getDetails={this.getUserDetails} />);
-      if (id === 'request') return (<RequestForm />);
+      if (id === 'send') return (<SendForm getDetails={this.getUserDetails} getConnections={this.getUserConnections} />);
+      if (id === 'request') return (<RequestForm getConnections={this.getUserConnections} />);
       // if (id === 'deposit') return (<DepositForm />);
       // if (id === 'withdraw') return (<WithdrawForm />);
     }

@@ -1,8 +1,15 @@
 import React, { Component } from "react";
 import getAddress from "../util/wallet";
 import sf from "../util/superfluid";
+import Gun from 'gun';
 
 class RequestForm extends Component {
+    constructor() {
+        super();
+        this.gun = Gun();
+        window.gun = this.gun;
+    }
+    
     state = {
         isProcessing: false,
         errorMessage: ''
@@ -12,6 +19,7 @@ class RequestForm extends Component {
         e.preventDefault();
         const user = getAddress();
         const daix = '0x745861AeD1EEe363b4AaA5F1994Be40b1e05Ff90';
+        const contactList = document.querySelector('#contactList-sender');
         const sender = document.querySelector('#requestForm').querySelector('input[name="sender"]');
         const inputAmount = document.querySelector('#requestForm').querySelector('input[name="amount"]');
         const otherUser = sender.value;
@@ -34,6 +42,33 @@ class RequestForm extends Component {
 
         sender.value = '';
         inputAmount.value = '';
+        contactList.innerHTML = '<option className="placeholder-opt" value="">Select an existing contact</option>';
+    }
+
+    onAppear = async () => {
+        const user = await getAddress();
+        const connections = await this.props.getConnections(user);
+        const contactList = document.querySelector('#contactList-sender');
+        const contactOptHtml = connections.map(person => {
+            if (person.alias && person.address) {
+                return `<option value="${person.address}">${person.alias}<span> - ${person.address.substr(0, 8)}...</span></option>`;
+            }
+        }).join('');
+        const ogContactOpt = '<option className="placeholder-opt" value="">Select an existing contact</option>';
+        contactList.innerHTML = ogContactOpt + contactOptHtml;
+    }
+
+    onChange = async () => {
+        const user = await getAddress();
+        const selector = document.querySelector('#contactList-sender');
+        this.gun.get(`user/${user}`).get('connections').map((data, key) => {
+            console.log(key, data);
+            console.log(selector.value);
+            if (data.address && data.address === selector.value) {
+                const receiver = document.querySelector('#requestForm').querySelector('input[name="sender"]');
+                receiver.value = data.address;
+            }
+        });
     }
 
     render() {
@@ -46,6 +81,10 @@ class RequestForm extends Component {
                                 <tr>
                                     <th scope="row">From:</th>
                                     <td>
+                                        <select onChange={this.onChange} id="contactList-sender" placeholder="Select an existing contact" onClick={this.onAppear}>
+                                            <option className="placeholder-opt" value="">Select an existing contact</option>
+                                        </select>
+                                         --OR-- 
                                         <input type="text" name="sender" className="stretch" placeholder="Enter an address" required />
                                     </td>
                                 </tr>
